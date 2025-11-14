@@ -1,0 +1,51 @@
+{
+  "grid": {
+    "width": 15,
+    "height": 12,
+    "cell_size": 50,
+    "blocked_roads": []
+  },
+  "nodes": [
+    {
+      "id": "distribution_center",
+      "name": "Centro Distribución",
+      "grid_x": 7,
+      "grid_y": 6,
+      "type": "distribution_center"
+    },
+    {
+      "id": "delivery_1",
+      "name": "Dom. 1",
+      "grid_x": 2,
+      "grid_y": 2,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_2",
+      "name": "Dom. 2",
+      "grid_x": 12,
+      "grid_y": 3,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_3",
+      "name": "Dom. 3",
+      "grid_x": 1,
+      "grid_y": 10,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_4",
+      "name": "Dom. 4",
+      "grid_x": 13,
+      "grid_y": 9,
+      "type": "delivery"
+    }
+  ],
+  "delivery_addresses": [
+    "delivery_1",
+    "delivery_2",
+    "delivery_3",
+    "delivery_4"
+  ]
+}
