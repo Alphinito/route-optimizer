@@ -1,15 +1,15 @@
 {
   "grid": {
-    "width": 15,
+    "width": 20,
     "height": 12,
-    "cell_size": 50,
+    "cell_size": 45,
     "blocked_roads": []
   },
   "nodes": [
     {
       "id": "distribution_center",
       "name": "Centro Distribución",
-      "grid_x": 7,
+      "grid_x": 10,
       "grid_y": 6,
       "type": "distribution_center"
     },
@@ -40,12 +40,100 @@
       "grid_x": 13,
       "grid_y": 9,
       "type": "delivery"
+    },
+    {
+      "id": "delivery_5",
+      "name": "Dom. 5",
+      "grid_x": 18,
+      "grid_y": 2,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_6",
+      "name": "Dom. 6",
+      "grid_x": 18,
+      "grid_y": 5,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_7",
+      "name": "Dom. 7",
+      "grid_x": 15,
+      "grid_y": 10,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_8",
+      "name": "Dom. 8",
+      "grid_x": 19,
+      "grid_y": 11,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_9",
+      "name": "Dom. 9",
+      "grid_x": 14,
+      "grid_y": 11,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_10",
+      "name": "Dom. 10",
+      "grid_x": 4,
+      "grid_y": 7,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_11",
+      "name": "Dom. 11",
+      "grid_x": 6,
+      "grid_y": 1,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_12",
+      "name": "Dom. 12",
+      "grid_x": 3,
+      "grid_y": 9,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_13",
+      "name": "Dom. 13",
+      "grid_x": 7,
+      "grid_y": 11,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_14",
+      "name": "Dom. 14",
+      "grid_x": 9,
+      "grid_y": 2,
+      "type": "delivery"
+    },
+    {
+      "id": "delivery_15",
+      "name": "Dom. 15",
+      "grid_x": 5,
+      "grid_y": 5,
+      "type": "delivery"
     }
   ],
   "delivery_addresses": [
     "delivery_1",
     "delivery_2",
     "delivery_3",
-    "delivery_4"
+    "delivery_4",
+    "delivery_5",
+    "delivery_6",
+    "delivery_7",
+    "delivery_8",
+    "delivery_9",
+    "delivery_10",
+    "delivery_11",
+    "delivery_12",
+    "delivery_13",
+    "delivery_14",
+    "delivery_15"
   ]
 }

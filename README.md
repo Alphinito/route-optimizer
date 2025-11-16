@@ -5,18 +5,32 @@ Sistema inteligente para optimizar rutas de entrega usando **algoritmos de grafo
 ## ✨ Características
 
 - **Grafo de Grid Complejo**: Representa una red realista de carreteras con intersecciones
-- **Algoritmo de Dijkstra**: Encuentra el camino más corto entre intersecciones
-- **Problema del Vendedor Viajero (TSP)**: Optimiza el orden de visita de domicilios con heurística de vecino más cercano
+  - Grid totalmente customizable (ancho, alto, tamaño de celda)
+  - Cada intersección es un nodo del grafo
+  - Las carreteras conectan intersecciones adyacentes
+
+- **Algoritmos de Grafos Implementados**:
+  - **Dijkstra**: Encuentra el camino más corto entre cualquier par de intersecciones
+  - **TSP (Vecino Más Cercano)**: Optimiza el orden de visita de múltiples domicilios
+
 - **Visualización Interactiva**: Genera HTML con SVG mostrando:
   - Grid completo de carreteras
-  - Ruta óptima destacada en azul
+  - Ruta óptima destacada en azul con animación
   - Centro de distribución y domicilios georreferenciados
-  - Estadísticas detalladas
+  - Estadísticas detalladas (distancia, intersecciones, secuencia)
 
-- **Arquitectura Extensible**:
-  - Bloqueo/desbloqueo dinámico de carreteras
+- **Totalmente Customizable**:
   - Configuración en JSON fácil de modificar
+  - Parámetros del grid (ancho, alto, tamaño de celda)
+  - Posiciones de puntos de interés (POIs)
+  - Bloqueo/desbloqueo dinámico de carreteras
+  - Listas de entregas configurables
+
+- **Código Limpio y Mantenible**:
   - Separación clara de responsabilidades
+  - Type hints y docstrings en todo el código
+  - Manejo robusto de errores
+  - Estructura modular con package proper
 
 ## 🏗️ Arquitectura
 
@@ -24,51 +38,107 @@ Sistema inteligente para optimizar rutas de entrega usando **algoritmos de grafo
 
 ```
 final_project/
-├── main.py                      # Punto de entrada
+├── main.py                      # Punto de entrada principal
 ├── config.json                  # Configuración del grid y POIs
 ├── requirements.txt             # Dependencias
-├── src/
-│   ├── __init__.py
-│   ├── config.py               # Gestión de configuración
-│   ├── grid_road.py            # Modelo de grid de carreteras
-│   ├── grid_route_optimizer.py # Optimizador de rutas
-│   ├── grid_html_renderer.py   # Renderizador HTML/SVG
-│   ├── graph.py                # Grafo original (deprecado)
-│   ├── route_optimizer.py      # Optimizador original (deprecado)
-│   └── html_renderer.py        # Renderizador original (deprecado)
-└── .gitignore
+├── PARAMETERS.md               # Guía completa de parámetros
+│
+└── src/                         # Módulo principal
+    ├── __init__.py             # API pública del módulo
+    ├── config.py               # Gestión de configuración
+    ├── grid_road.py            # Modelo de grid de carreteras
+    ├── grid_route_optimizer.py # Optimizador de rutas
+    └── grid_html_renderer.py   # Renderizador HTML/SVG
 ```
 
 ### Componentes Principales
 
 #### `RoadGrid` - Modelo de carreteras
-- Crea un grid de intersecciones
-- Conecta intersecciones adyacentes con carreteras
-- Permite mapear POIs (puntos de interés) a intersecciones
-- Soporta bloqueo/desbloqueo de carreteras
+Representa la red de carreteras como un grid de intersecciones conectadas.
 
 ```python
+from src import RoadGrid
+
+# Crear grid de 15x12 intersecciones, 50px entre cada una
 road_grid = RoadGrid(width=15, height=12, cell_size=50)
+
+# Mapear puntos de interés al grid
 road_grid.add_poi("delivery_1", grid_x=2, grid_y=2)
+road_grid.add_poi("distribution_center", grid_x=7, grid_y=6)
+
+# Bloquear una carretera (construcción, etc.)
+road_grid.block_road("grid_5_5", "grid_6_5")
 ```
 
+**Características**:
+- Crea automáticamente conexiones entre intersecciones adyacentes
+- Permite mapear POIs a intersecciones específicas
+- Soporta bloqueo/desbloqueo dinámico de carreteras
+- Calcula vecinos accesibles para cada intersección
+
 #### `GridRouteOptimizer` - Optimización de rutas
-- Implementa Dijkstra para caminos más cortos
-- Resuelve TSP aproximado con heurística de vecino más cercano
-- Construye ruta completa a través del grid
+Calcula la ruta óptima usando algoritmos de grafos.
 
 ```python
+from src import GridRouteOptimizer
+
 optimizer = GridRouteOptimizer(road_grid)
+
+# Calcular ruta óptima
 route = optimizer.optimize_route(
     start_poi="distribution_center",
     destination_pois=["delivery_1", "delivery_2", "delivery_3"]
 )
+
+print(f"Ruta: {route.poi_path}")
+print(f"Distancia: {route.total_distance:.2f} px")
+print(f"Intersecciones recorridas: {len(route.path)}")
 ```
 
+**Algoritmos implementados**:
+- **Dijkstra**: O((V+E) log V) - Encuentra el camino más corto entre dos puntos
+- **TSP Heurístico**: O(n²) - Ordena entregas usando la heurística de vecino más cercano
+
 #### `GridHTMLRenderer` - Visualización
-- Genera SVG con el grid de carreteras
-- Destaca la ruta óptima
-- Incluye información de estadísticas
+Genera visualización interactiva en HTML/SVG.
+
+```python
+from src import GridHTMLRenderer
+
+renderer = GridHTMLRenderer(road_grid, config)
+renderer.render_route(route, output_file="output.html")
+```
+
+**Genera automáticamente**:
+- Grid de carreteras en SVG con todas las intersecciones
+- Ruta óptima destacada en azul con animación pulsante
+- Posiciones de todos los POIs georreferenciados
+- Panel de información con estadísticas
+- Leyenda de colores y elementos
+
+#### `Config` - Gestión de configuración
+Carga y valida configuración desde JSON con valores por defecto.
+
+```python
+from src import Config
+
+config = Config("config.json")
+
+# Acceso a configuración
+grid_config = config.get_grid_config()  # {'width': 15, 'height': 12, 'cell_size': 50}
+nodes = config.get_nodes()
+deliveries = config.get_delivery_addresses()
+
+# Búsqueda de nodos
+node = config.get_node_by_id("delivery_1")
+```
+
+**Características**:
+- Validación automática de campos requeridos
+- Valores por defecto inteligentes
+- Type hints en todos los métodos
+- Docstrings en cada método
+- Manejo robusto de errores
 
 ## 🚀 Instalación y Uso
 
@@ -95,9 +165,30 @@ source venv/bin/activate  # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Uso
+### Uso Rápido
 
-1. **Configurar grid y POIs** en `config.json`:
+```bash
+python main.py
+```
+
+Esto cargará `config.json`, calculará la ruta óptima y generará `output.html`.
+
+**Salida esperada**:
+```
+============================================================
+✅ OPTIMIZACIÓN COMPLETADA
+============================================================
+📍 Ruta óptima: distribution_center → delivery_2 → delivery_4 → delivery_3 → delivery_1
+🛣️  Intersecciones recorridas: 38
+📏 Distancia total: 2035.00 px
+📄 Archivo generado: output.html
+============================================================
+```
+
+### Configuración
+
+1. **Editar `config.json`** con tu grid y POIs:
+
 ```json
 {
   "grid": {
@@ -120,30 +211,71 @@ pip install -r requirements.txt
       "grid_x": 2,
       "grid_y": 2,
       "type": "delivery"
+    },
+    {
+      "id": "delivery_2",
+      "name": "Dom. 2",
+      "grid_x": 12,
+      "grid_y": 3,
+      "type": "delivery"
     }
   ],
-  "delivery_addresses": ["delivery_1", "delivery_2"]
+  "delivery_addresses": [
+    "delivery_1",
+    "delivery_2"
+  ]
 }
 ```
 
-2. **Ejecutar el optimizador**
+2. **Ejecutar**:
 ```bash
 python main.py
 ```
 
-3. **Ver resultado** en `output.html`
-```bash
-open output.html  # En macOS
-start output.html  # En Windows
-```
+3. **Ver resultado**: Abre `output.html` en tu navegador
 
-## 📊 Ejemplo de Salida
+### Parámetros Customizables
 
-```
-Ruta óptima: distribution_center → delivery_2 → delivery_4 → delivery_3 → delivery_1
-Intersecciones recorridas: 38
-Distancia total: 1850.00 px
-Archivo generado: output.html
+Para una guía completa de parámetros customizables, consulta **[PARAMETERS.md](PARAMETERS.md)**
+
+**Parámetros básicos del grid**:
+- `width`: Número de intersecciones horizontales
+- `height`: Número de intersecciones verticales
+- `cell_size`: Distancia en píxeles entre intersecciones
+
+**Parámetros de POI**:
+- `id`: Identificador único
+- `name`: Nombre legible
+- `grid_x`: Posición horizontal (0 a width-1)
+- `grid_y`: Posición vertical (0 a height-1)
+- `type`: "distribution_center" o "delivery"
+
+**Ejemplo: Grid más grande**
+```json
+{
+  "grid": {
+    "width": 30,
+    "height": 25,
+    "cell_size": 50
+  },
+  "nodes": [
+    {
+      "id": "distribution_center",
+      "name": "Centro Distribución",
+      "grid_x": 15,
+      "grid_y": 12,
+      "type": "distribution_center"
+    },
+    {
+      "id": "delivery_1",
+      "name": "Zona Norte",
+      "grid_x": 8,
+      "grid_y": 5,
+      "type": "delivery"
+    }
+  ],
+  "delivery_addresses": ["delivery_1"]
+}
 ```
 
 ## 🔄 Algoritmos Implementados
