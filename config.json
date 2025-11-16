@@ -4,7 +4,9 @@
     "height": 12,
     "cell_size": 45,
     "blocked_roads": [
-      ["grid_10_4", "grid_10_5"]
+      ["grid_10_1", "grid_10_2"],
+      ["grid_10_2", "grid_10_3"],
+      ["grid_10_3", "grid_10_4"]
     ]
   },
   "nodes": [
