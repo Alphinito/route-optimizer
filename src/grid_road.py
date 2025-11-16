@@ -133,25 +133,50 @@ class RoadGrid:
         neighbors = []
         for (from_id, to_id), road in self.roads.items():
             if from_id == intersection_id and road.is_passable:
-                # Calcular distancia euclidiana
-                from_intersection = self.intersections[from_id]
+                # Validar que la intersección destino también sea accesible
                 to_intersection = self.intersections[to_id]
-                distance = ((from_intersection.pixel_x - to_intersection.pixel_x) ** 2 + 
-                           (from_intersection.pixel_y - to_intersection.pixel_y) ** 2) ** 0.5
-                neighbors.append((to_id, distance))
+                if to_intersection.is_passable:
+                    # Calcular distancia euclidiana
+                    from_intersection = self.intersections[from_id]
+                    distance = ((from_intersection.pixel_x - to_intersection.pixel_x) ** 2 + 
+                               (from_intersection.pixel_y - to_intersection.pixel_y) ** 2) ** 0.5
+                    neighbors.append((to_id, distance))
         return neighbors
     
     def block_road(self, from_id: str, to_id: str):
-        """Bloquea una carretera específica"""
-        key = (from_id, to_id)
-        if key in self.roads:
-            self.roads[key].is_passable = False
+        """
+        Bloquea una carretera en ambas direcciones (bidireccional) y sus intersecciones destino
+        
+        Args:
+            from_id: ID de intersección de origen
+            to_id: ID de intersección de destino
+        """
+        # Bloquear carreteras en ambas direcciones
+        if (from_id, to_id) in self.roads:
+            self.roads[(from_id, to_id)].is_passable = False
+        if (to_id, from_id) in self.roads:
+            self.roads[(to_id, from_id)].is_passable = False
+        
+        # Bloquear la intersección destino para prevenir cruces perpendiculares
+        self.block_intersection(to_id)
     
     def unblock_road(self, from_id: str, to_id: str):
-        """Desbloquea una carretera específica"""
-        key = (from_id, to_id)
-        if key in self.roads:
-            self.roads[key].is_passable = True
+        """
+        Desbloquea una carretera en ambas direcciones (bidireccional) y sus intersecciones
+        
+        Args:
+            from_id: ID de intersección de origen
+            to_id: ID de intersección de destino
+        """
+        # Desbloquear carreteras en ambas direcciones
+        if (from_id, to_id) in self.roads:
+            self.roads[(from_id, to_id)].is_passable = True
+        if (to_id, from_id) in self.roads:
+            self.roads[(to_id, from_id)].is_passable = True
+        
+        # Desbloquear la intersección
+        if to_id in self.intersections:
+            self.intersections[to_id].is_passable = True
     
     def block_intersection(self, intersection_id: str):
         """Bloquea una intersección (construcción, etc.)"""

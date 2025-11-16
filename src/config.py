@@ -45,13 +45,14 @@ class Config:
         Obtiene configuración del grid con valores por defecto
         
         Returns:
-            Diccionario con parámetros: width, height, cell_size
+            Diccionario con parámetros: width, height, cell_size, blocked_roads
         """
         grid = self.data.get("grid", {})
         return {
             "width": grid.get("width", self.DEFAULT_GRID_WIDTH),
             "height": grid.get("height", self.DEFAULT_GRID_HEIGHT),
             "cell_size": grid.get("cell_size", self.DEFAULT_CELL_SIZE),
+            "blocked_roads": grid.get("blocked_roads", []),
         }
     
     def get_nodes(self) -> List[Dict]:
@@ -74,12 +75,13 @@ class Config:
     
     def get_blocked_roads(self) -> List[str]:
         """
-        Obtiene lista de carreteras bloqueadas
+        Obtiene lista de carreteras bloqueadas desde grid.blocked_roads
         
         Returns:
-            Lista de IDs de carreteras bloqueadas
+            Lista de carreteras bloqueadas en formato [from_id, to_id]
         """
-        return self.data.get("blocked_roads", [])
+        grid_config = self.get_grid_config()
+        return grid_config.get("blocked_roads", [])
     
     def get_node_by_id(self, node_id: str) -> Optional[Dict]:
         """

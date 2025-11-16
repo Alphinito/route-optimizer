@@ -5,6 +5,11 @@ Este script calcula la ruta óptima para realizar entregas en múltiples
 domicilios partiendo desde un centro de distribución, utilizando algoritmos
 de grafos en una red de carreteras representada como un grid.
 """
+import sys
+import io
+
+# Configurar encoding UTF-8 para la salida
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from src import Config, RoadGrid, GridRouteOptimizer, GridHTMLRenderer
 
@@ -31,6 +36,12 @@ def main():
                 grid_x=node["grid_x"],
                 grid_y=node["grid_y"]
             )
+        
+        # Aplicar carreteras bloqueadas desde la configuración
+        blocked_roads = config.get_blocked_roads()
+        for blocked_road in blocked_roads:
+            if isinstance(blocked_road, list) and len(blocked_road) == 2:
+                road_grid.block_road(blocked_road[0], blocked_road[1])
         
         # Obtener lista de domicilios a entregar
         delivery_addresses = config.get_delivery_addresses()
