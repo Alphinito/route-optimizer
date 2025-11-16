@@ -279,15 +279,16 @@ class GridHTMLRenderer:
         }
         
         .road {
-            stroke: #999;
+            stroke: #bbb;
             stroke-width: 2;
             fill: none;
         }
         
         .road-blocked {
-            stroke: #ddd;
-            stroke-dasharray: 5,5;
-            opacity: 0.5;
+            stroke: #ff4444;
+            stroke-width: 3;
+            stroke-dasharray: 4,4;
+            opacity: 1;
         }
         
         .route-road {
@@ -389,25 +390,36 @@ class GridHTMLRenderer:
             route_edges.add((grid_route.full_path[i], grid_route.full_path[i + 1]))
             route_edges.add((grid_route.full_path[i + 1], grid_route.full_path[i]))
         
-        # Dibujar todas las carreteras primero (fondo)
+        # Dibujar carreteras normales primero (fondo)
         for (from_id, to_id), road in self.road_grid.roads.items():
             if to_id > from_id:  # Evitar duplicados
                 from_intersection = road.from_intersection
                 to_intersection = road.to_intersection
                 
-                is_in_route = (from_id, to_id) in route_edges
-                class_attr = "route-road" if is_in_route else "road"
-                
-                if is_secondary and is_in_route:
-                    class_attr += " secondary"
-                
-                if not road.is_passable:
-                    class_attr += " road-blocked"
-                
-                line = f'''            <line x1="{from_intersection.pixel_x}" y1="{from_intersection.pixel_y}"
-                   x2="{to_intersection.pixel_x}" y2="{to_intersection.pixel_y}"
-                   class="{class_attr}"/>'''
-                elements.append(line)
+                # Solo dibujar carreteras NO bloqueadas aquí
+                if road.is_passable:
+                    is_in_route = (from_id, to_id) in route_edges
+                    class_attr = "route-road" if is_in_route else "road"
+                    
+                    if is_secondary and is_in_route:
+                        class_attr += " secondary"
+                    
+                    line = f'''            <line x1="{from_intersection.pixel_x}" y1="{from_intersection.pixel_y}"
+                       x2="{to_intersection.pixel_x}" y2="{to_intersection.pixel_y}"
+                       class="{class_attr}"/>'''
+                    elements.append(line)
+        
+        # Dibujar carreteras bloqueadas DESPUÉS (superpuesta, siempre visible)
+        for (from_id, to_id), road in self.road_grid.roads.items():
+            if to_id > from_id:  # Evitar duplicados
+                if not road.is_passable:  # Solo las bloqueadas
+                    from_intersection = road.from_intersection
+                    to_intersection = road.to_intersection
+                    
+                    line = f'''            <line x1="{from_intersection.pixel_x}" y1="{from_intersection.pixel_y}"
+                       x2="{to_intersection.pixel_x}" y2="{to_intersection.pixel_y}"
+                       class="road-blocked"/>'''
+                    elements.append(line)
         
         # Dibujar intersecciones
         for intersection in self.road_grid.intersections.values():

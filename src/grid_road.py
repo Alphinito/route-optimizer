@@ -142,16 +142,32 @@ class RoadGrid:
         return neighbors
     
     def block_road(self, from_id: str, to_id: str):
-        """Bloquea una carretera específica"""
-        key = (from_id, to_id)
-        if key in self.roads:
-            self.roads[key].is_passable = False
+        """
+        Bloquea una carretera en ambas direcciones (bidireccional)
+        
+        Args:
+            from_id: ID de intersección de origen
+            to_id: ID de intersección de destino
+        """
+        # Bloquear en ambas direcciones
+        if (from_id, to_id) in self.roads:
+            self.roads[(from_id, to_id)].is_passable = False
+        if (to_id, from_id) in self.roads:
+            self.roads[(to_id, from_id)].is_passable = False
     
     def unblock_road(self, from_id: str, to_id: str):
-        """Desbloquea una carretera específica"""
-        key = (from_id, to_id)
-        if key in self.roads:
-            self.roads[key].is_passable = True
+        """
+        Desbloquea una carretera en ambas direcciones (bidireccional)
+        
+        Args:
+            from_id: ID de intersección de origen
+            to_id: ID de intersección de destino
+        """
+        # Desbloquear en ambas direcciones
+        if (from_id, to_id) in self.roads:
+            self.roads[(from_id, to_id)].is_passable = True
+        if (to_id, from_id) in self.roads:
+            self.roads[(to_id, from_id)].is_passable = True
     
     def block_intersection(self, intersection_id: str):
         """Bloquea una intersección (construcción, etc.)"""
