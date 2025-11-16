@@ -38,19 +38,29 @@ def main():
             print("⚠️  Error: No hay domicilios definidos en la configuración")
             return
         
-        # Inicializar optimizador y calcular ruta
+        # Inicializar optimizador y calcular rutas
         optimizer = GridRouteOptimizer(road_grid)
-        grid_route = optimizer.optimize_route(
+        
+        # Generar ruta con algoritmo de vecino más cercano
+        route_nearest = optimizer.optimize_route(
             start_poi="distribution_center",
-            destination_pois=delivery_addresses
+            destination_pois=delivery_addresses,
+            strategy="nearest_neighbor"
         )
         
-        # Generar visualización HTML
+        # Generar ruta optimizada con 2-opt
+        route_optimized = optimizer.optimize_route(
+            start_poi="distribution_center",
+            destination_pois=delivery_addresses,
+            strategy="2opt"
+        )
+        
+        # Generar visualización HTML con comparación
         renderer = GridHTMLRenderer(road_grid, config)
-        renderer.render_route(grid_route, output_file="output.html")
+        renderer.render_comparison(route_nearest, route_optimized, output_file="output.html")
         
         # Mostrar resultados
-        _print_results(grid_route)
+        _print_results(route_nearest, route_optimized)
         
     except FileNotFoundError:
         print("❌ Error: No se encontró el archivo config.json")
@@ -62,16 +72,32 @@ def main():
         print(f"❌ Error inesperado: {e}")
 
 
-def _print_results(grid_route):
+def _print_results(route_nearest, route_optimized):
     """Imprime los resultados de la optimización de forma legible"""
-    print("\n" + "="*60)
-    print("✅ OPTIMIZACIÓN COMPLETADA")
-    print("="*60)
-    print(f"📍 Ruta óptima: {' → '.join(grid_route.poi_path)}")
-    print(f"🛣️  Intersecciones recorridas: {len(grid_route.path)}")
-    print(f"📏 Distancia total: {grid_route.total_distance:.2f} px")
-    print(f"📄 Archivo generado: output.html")
-    print("="*60 + "\n")
+    improvement = ((route_nearest.total_distance - route_optimized.total_distance) / 
+                   route_nearest.total_distance * 100)
+    
+    print("\n" + "="*70)
+    print("✅ OPTIMIZACIÓN COMPLETADA - COMPARATIVA DE RESULTADOS")
+    print("="*70)
+    
+    print("\n📍 RUTA INICIAL (Vecino más cercano):")
+    print(f"   Secuencia: {' → '.join(route_nearest.path[:10])}" + 
+          ("..." if len(route_nearest.path) > 10 else ""))
+    print(f"   Intersecciones: {len(route_nearest.full_path)}")
+    print(f"   Distancia: {route_nearest.total_distance:.2f} px")
+    
+    print("\n🚀 RUTA OPTIMIZADA (Vecino más cercano + 2-Opt):")
+    print(f"   Secuencia: {' → '.join(route_optimized.path[:10])}" + 
+          ("..." if len(route_optimized.path) > 10 else ""))
+    print(f"   Intersecciones: {len(route_optimized.full_path)}")
+    print(f"   Distancia: {route_optimized.total_distance:.2f} px")
+    print(f"   Iteraciones 2-Opt: {route_optimized.iterations}")
+    
+    print(f"\n📊 MEJORA: {improvement:.2f}% reducción en distancia total")
+    print(f"📏 Distancia ahorrada: {route_nearest.total_distance - route_optimized.total_distance:.2f} px")
+    print(f"\n📄 Archivo generado: output.html")
+    print("="*70 + "\n")
 
 
 if __name__ == "__main__":
