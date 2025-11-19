@@ -87,6 +87,7 @@ def _print_results(route_nearest, route_optimized):
     """Imprime los resultados de la optimización de forma legible"""
     improvement = ((route_nearest.total_distance - route_optimized.total_distance) / 
                    route_nearest.total_distance * 100)
+    intersection_reduction = route_nearest.total_intersections - route_optimized.total_intersections
     
     print("\n" + "="*70)
     print("✅ OPTIMIZACIÓN COMPLETADA - COMPARATIVA DE RESULTADOS")
@@ -95,17 +96,18 @@ def _print_results(route_nearest, route_optimized):
     print("\n📍 RUTA INICIAL (Vecino más cercano):")
     print(f"   Secuencia: {' → '.join(route_nearest.path[:10])}" + 
           ("..." if len(route_nearest.path) > 10 else ""))
-    print(f"   Intersecciones: {len(route_nearest.full_path)}")
+    print(f"   Intersecciones: {route_nearest.total_intersections}")
     print(f"   Distancia: {route_nearest.total_distance:.2f} px")
     
     print("\n🚀 RUTA OPTIMIZADA (Vecino más cercano + 2-Opt):")
     print(f"   Secuencia: {' → '.join(route_optimized.path[:10])}" + 
           ("..." if len(route_optimized.path) > 10 else ""))
-    print(f"   Intersecciones: {len(route_optimized.full_path)}")
+    print(f"   Intersecciones: {route_optimized.total_intersections}")
     print(f"   Distancia: {route_optimized.total_distance:.2f} px")
     print(f"   Iteraciones 2-Opt: {route_optimized.iterations}")
     
     print(f"\n📊 MEJORA: {improvement:.2f}% reducción en distancia total")
+    print(f"📏 Intersecciones reducidas: {intersection_reduction} nodos menos")
     print(f"📏 Distancia ahorrada: {route_nearest.total_distance - route_optimized.total_distance:.2f} px")
     print(f"\n📄 Archivo generado: output.html")
     print("="*70 + "\n")

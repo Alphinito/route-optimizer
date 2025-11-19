@@ -18,7 +18,8 @@ class OptimizedRoute:
     """Representa una ruta optimizada con metadatos"""
     path: List[str]  # Lista de POI IDs en orden
     full_path: List[str]  # Ruta completa con todas las intersecciones
-    total_distance: float
+    total_distance: float  # Distancia total en píxeles (para cálculos internos)
+    total_intersections: int  # Número de intersecciones recorridas (para visualización)
     algorithm_name: str
     iterations: int = 0  # Para 2-opt, cuántas iteraciones se realizaron
 
@@ -176,11 +177,13 @@ class NearestNeighborStrategy(OptimizationStrategy):
         # Construir ruta completa
         full_path = self._build_full_path(poi_path)
         total_distance = self._calculate_path_distance(poi_path)
+        total_intersections = len(full_path)
         
         return OptimizedRoute(
             path=poi_path,
             full_path=full_path,
             total_distance=total_distance,
+            total_intersections=total_intersections,
             algorithm_name="TSP Nearest Neighbor"
         )
 
@@ -206,11 +209,13 @@ class TwoOptStrategy(OptimizationStrategy):
         # Paso 3: Construir ruta completa
         full_path = self._build_full_path(poi_path)
         total_distance = self._calculate_path_distance(poi_path)
+        total_intersections = len(full_path)
         
         return OptimizedRoute(
             path=poi_path,
             full_path=full_path,
             total_distance=total_distance,
+            total_intersections=total_intersections,
             algorithm_name="TSP + 2-Opt Local Search",
             iterations=iterations
         )

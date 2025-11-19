@@ -84,7 +84,6 @@ class GridHTMLRenderer:
     def _generate_primary_section(self, grid_route, viewbox: str, canvas: str) -> str:
         """Genera la sección primaria con la primera ruta"""
         poi_sequence = " → ".join(grid_route.path)
-        intersection_count = len(grid_route.full_path)
         
         return f"""        <div class="route-section primary-section">
             <h2>📍 Ruta Inicial</h2>
@@ -93,7 +92,7 @@ class GridHTMLRenderer:
                     <h3>📊 Estadísticas</h3>
                     <p><strong>Algoritmo:</strong> {grid_route.algorithm_name}</p>
                     <p><strong>Distancia Total:</strong> {grid_route.total_distance:.2f} px</p>
-                    <p><strong>Intersecciones:</strong> {intersection_count}</p>
+                    <p><strong>Intersecciones Recorridas:</strong> {grid_route.total_intersections}</p>
                     <p><strong>Domicilios:</strong> {len(grid_route.path) - 1}</p>
                 </div>
                 <div class="info-card">
@@ -117,7 +116,6 @@ class GridHTMLRenderer:
     def _generate_secondary_section(self, grid_route, viewbox: str, canvas: str) -> str:
         """Genera la sección secundaria con la ruta optimizada"""
         poi_sequence = " → ".join(grid_route.path)
-        intersection_count = len(grid_route.full_path)
         
         return f"""        <div class="comparison-divider"></div>
         
@@ -128,7 +126,7 @@ class GridHTMLRenderer:
                     <h3>📊 Estadísticas</h3>
                     <p><strong>Algoritmo:</strong> {grid_route.algorithm_name}</p>
                     <p><strong>Distancia Total:</strong> {grid_route.total_distance:.2f} px</p>
-                    <p><strong>Intersecciones:</strong> {intersection_count}</p>
+                    <p><strong>Intersecciones Recorridas:</strong> {grid_route.total_intersections}</p>
                     <p><strong>Domicilios:</strong> {len(grid_route.path) - 1}</p>
                     {f'<p><strong>Iteraciones 2-Opt:</strong> {grid_route.iterations}</p>' if grid_route.iterations > 0 else ''}
                 </div>
