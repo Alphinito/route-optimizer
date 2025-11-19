@@ -18,7 +18,9 @@ def main():
     """Función principal del optimizador de rutas"""
     try:
         # Cargar configuración desde JSON
-        config = Config("config.json")
+        #config = Config("config.json")
+        #config = Config("configPuente.json")
+        config = Config("configSplit.json")
         
         # Obtener parámetros del grid
         grid_config = config.get_grid_config()
